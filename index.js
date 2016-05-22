@@ -1,6 +1,7 @@
 'use strict'
 
 const usersAdded = [];
+const usersDone = [];
 
 function loadUser(name) {
   console.log(`Loading ${name}...`)
@@ -10,6 +11,9 @@ function loadUser(name) {
   ])
     .then(res => Promise.all(res.map(r => r.json())))
     .then(([user, followers]) => {
+      if (usersDone.includes(user.id)) return;
+      usersDone.push(user.id);
+
       console.log(user)
       const userNode = {id: user.id, label: user.username}
       const followerNodes = followers.map(u => ({id: u.id, label: u.username}))
@@ -19,7 +23,7 @@ function loadUser(name) {
         usersAdded.push(n.id)
       })
       const connections = followerNodes
-        .filter(n => addNodes.includes(n))
+        // .filter(n => addNodes.includes(n))
         .map(u => ({from: user.id, to: u.id}))
       nodes.add(addNodes)
       edges.add(connections)
